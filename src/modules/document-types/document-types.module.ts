@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { DocumentTypesController } from './adapters/controllers/document-types.controller';
+import { DocumentTypeController } from './adapters/controllers/document-type.controller';
 
 @Module({
-  controllers: [DocumentTypesController]
+  controllers: [DocumentTypeController]
 })
 export class DocumentTypesModule {}
