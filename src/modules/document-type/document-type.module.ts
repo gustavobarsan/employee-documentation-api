@@ -4,4 +4,4 @@ import { DocumentTypeController } from './adapters/controllers/document-type.con
 @Module({
   controllers: [DocumentTypeController]
 })
-export class DocumentTypesModule {}
+export class DocumentTypeModule {}

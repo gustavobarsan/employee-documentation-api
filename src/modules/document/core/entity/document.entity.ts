@@ -10,6 +10,6 @@ export class Document {
   status: DocumentStatus;
   employeeId: string;
   documentTypeId: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
-
- 
