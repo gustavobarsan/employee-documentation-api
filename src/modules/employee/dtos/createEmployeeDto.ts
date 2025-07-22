@@ -1,4 +1,4 @@
-import { IsDateString, IsEmail, IsNotEmpty, IsOptional, IsPhoneNumber, IsString } from 'class-validator';
+import { IsArray, IsDateString, IsEmail, IsNotEmpty, IsOptional, IsPhoneNumber, IsString } from 'class-validator';
 
 export class CreateEmployeeDto {
   @IsNotEmpty()
@@ -6,26 +6,7 @@ export class CreateEmployeeDto {
   name: string;
 
   @IsNotEmpty()
+  @IsArray()
   @IsString()
-  document: string;
-
-  @IsNotEmpty()
-  @IsEmail()
-  email: string;
-
-  @IsNotEmpty()
-  @IsPhoneNumber('BR')
-  phone: string;
-
-  @IsNotEmpty()
-  @IsDateString()
-  admissionDate: Date;
-
-  @IsOptional()
-  @IsDateString()
-  demissionDate?: Date;
-
-  @IsNotEmpty()
-  @IsString()
-  status: string;
+  documents: string[];
 }
