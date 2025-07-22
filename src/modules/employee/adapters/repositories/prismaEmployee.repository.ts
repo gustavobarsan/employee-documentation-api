@@ -4,31 +4,68 @@ import { EmployeePortRepository } from '../../core/ports/employee.port.repositor
 import { PrismaService } from 'src/shared/prisma/prisma.service';
 
 @Injectable()
-export class PrismaEmployeeRepository implements EmployeePortRepository {
+export class EmployeePrismaRepository implements EmployeePortRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(
-    employeeData: Omit<Employee, 'id' | 'createdAt' | 'updatedAt'>,
-  ): Promise<Employee> {
-    return this.prisma.employee.create({
-      data: employeeData,
-    });
+  async create(employee: Employee): Promise<Employee> {
+    const data = {
+      id: employee.id,
+      name: employee.name,
+      hiredAt: employee.hiredAt,
+      createdAt: employee.createdAt,
+      updatedAt: employee.updatedAt,
+      documents: {
+        connect: employee.documents.map(id => ({ id })),
+      },
+    };
+
+    const result = await this.prisma.employee.create({ data });
+    return new Employee(result);
   }
 
   async findById(id: string): Promise<Employee | null> {
-    return this.prisma.employee.findUnique({ where: { id } });
+    const result = await this.prisma.employee.findUnique({
+      where: { id },
+      include: { documents: true },
+    });
+
+    return result ? new Employee(result) : null;
   }
 
-  async findByDocument(document: string): Promise<Employee | null> {
-    return this.prisma.employee.findUnique({ where: { document } });
+  async findByDocument(documentId: string): Promise<Employee | null> {
+    const result = await this.prisma.employee.findFirst({
+      where: {
+        documents: {
+          some: { id: documentId },
+        },
+      },
+    });
+
+    return result ? new Employee(result) : null;
   }
 
   async findAll(): Promise<Employee[]> {
-    return this.prisma.employee.findMany();
+    const results = await this.prisma.employee.findMany({
+      include: { documents: true },
+    });
+
+    return results.map(r => new Employee(r));
   }
 
-  async update(id: string, employeeData: Partial<Employee>): Promise<Employee> {
-    return this.prisma.employee.update({ where: { id }, data: employeeData });
+  async update(id: string, employee: Partial<Employee>): Promise<Employee> {
+    const result = await this.prisma.employee.update({
+      where: { id },
+      data: {
+        name: employee.name,
+        updatedAt: employee.updatedAt,
+        documents: employee.documents ? {
+          set: employee.documents.map(id => ({ id })),
+        } : undefined,
+      },
+      include: { documents: true },
+    });
+
+    return new Employee(result);
   }
 
   async delete(id: string): Promise<void> {
