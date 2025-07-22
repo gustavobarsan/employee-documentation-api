@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Employee {
+  id        String         @id @default(uuid())
+  name      String
+  hiredAt   DateTime       @map("hired_at")
+
+  status    EmployeeStatus @default(ACTIVE)
+
+  documents Document[]
+
+  createdAt DateTime       @default(now()) @map("created_at")
+  updatedAt DateTime       @updatedAt @map("updated_at")
+
+  @@map("employees")
+}
+
+model Document {
+  id             String         @id @default(uuid())
+  name           String
+  status         DocumentStatus @default(PENDING)
+
+  employeeId     String         @map("employee_id")
+  employee       Employee       @relation(fields: [employeeId], references: [id])
+
+  documentTypeId String
+  documentType   DocumentType   @relation(fields: [documentTypeId], references: [id])
+
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
+
+  @@map("documents")
+}
+
+model DocumentType {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+
+  documents   Document[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("document_types")
+}
+
+enum EmployeeStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum DocumentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
