@@ -1,9 +1,9 @@
-import { UUID } from 'crypto';
-
 export class Employee {
-  id: UUID;
+  id: string;
   name: string;
-  documents: string[];
+  documents: string [];
+  documentTypes?: { id: string; name: string, description: string}[];
+  status: EmployeeStatus;
   hiredAt: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -13,4 +13,10 @@ export class Employee {
     if (!this.createdAt) this.createdAt = new Date();
     this.updatedAt = new Date();
   }
+}
+
+enum EmployeeStatus {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  TERMINATED = 'TERMINATED',
 }
