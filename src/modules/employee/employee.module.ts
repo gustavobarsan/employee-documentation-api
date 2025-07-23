@@ -1,9 +1,30 @@
 import { Module } from '@nestjs/common';
 import { EmployeeController } from './adapters/controllers/employee.controller';
-import { PrismaModule } from 'src/shared/prisma/prisma.module';
+import { PrismaService } from '../../shared/prisma/prisma.service';
+import {
+  CreateEmployeeUseCase,
+  DeleteEmployeeUseCase,
+  GetAllEmployeesUseCase,
+  GetEmployeeByIdUseCase,
+  UpdateEmployeeUseCase,
+} from './core/usecases';
+import { EmployeePrismaRepository } from './adapters/repositories/prismaEmployee.repository';
+import { EmployeePortRepository } from './core/ports';
 
 @Module({
-  imports: [PrismaModule],
-  controllers: [EmployeeController]
+  providers: [
+    PrismaService,
+    {
+      provide: EmployeePortRepository,
+      useClass: EmployeePrismaRepository,
+    },
+    CreateEmployeeUseCase,
+    GetEmployeeByIdUseCase,
+    GetAllEmployeesUseCase,
+    UpdateEmployeeUseCase,
+    DeleteEmployeeUseCase,
+  ],
+  imports: [],
+  controllers: [EmployeeController],
 })
 export class EmployeeModule {}
