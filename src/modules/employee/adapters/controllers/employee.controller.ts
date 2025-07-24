@@ -7,6 +7,7 @@ import {
   HttpStatus,
   NotFoundException,
   Param,
+  Patch,
   Post,
   Put,
   Query,
@@ -18,10 +19,12 @@ import {
   GetEmployeeByIdUseCase,
   LinkDocumentTypesToEmployeeUseCase,
   UpdateEmployeeUseCase,
+  UnlinkDocumentTypesFromEmployeeUseCase,
 } from '../../core/usecases';
 import {
   CreateEmployeeDto,
   LinkDocumentTypesToEmployeeDto,
+  UnlinkDocumentTypesFromEmployeeDto,
   UpdateEmployeeDto,
 } from '../../dtos';
 
@@ -34,6 +37,7 @@ export class EmployeeController {
     private readonly updateEmployeeUseCase: UpdateEmployeeUseCase,
     private readonly deleteEmployeeUseCase: DeleteEmployeeUseCase,
     private readonly linkDocumentTypesToEmployeeUseCase: LinkDocumentTypesToEmployeeUseCase,
+    private readonly unlinkDocumentTypesFromEmployeeUseCase: UnlinkDocumentTypesFromEmployeeUseCase,
   ) {}
 
   @Post()
@@ -84,5 +88,14 @@ export class EmployeeController {
     @Body() linkDto: LinkDocumentTypesToEmployeeDto,
   ) {
     return this.linkDocumentTypesToEmployeeUseCase.execute(id, linkDto);
+  }
+
+  @Patch(':id/document-types')
+  @HttpCode(HttpStatus.OK)
+  unlinkDocumentTypes(
+    @Param('id') id: string,
+    @Body() unlinkDto: UnlinkDocumentTypesFromEmployeeDto,
+  ) {
+    return this.unlinkDocumentTypesFromEmployeeUseCase.execute(id, unlinkDto);
   }
 }

@@ -97,6 +97,25 @@ export class EmployeePrismaRepository implements EmployeePortRepository {
 
     return toEmployeeDomain(updatedEmployee);
   }
+  async unlinkDocumentTypes(
+    employeeId: string,
+    documentTypeIds: string[],
+  ): Promise<Employee> {
+    const updatedEmployee = await this.prisma.employee.update({
+      where: { id: employeeId },
+      data: {
+        documentTypes: {
+          disconnect: documentTypeIds.map((id) => ({ id })),
+        },
+      },
+      include: {
+        documents: true,
+        documentTypes: true,
+      },
+    });
+
+    return toEmployeeDomain(updatedEmployee);
+  }
 }
 
 function toEmployeeDomain(
