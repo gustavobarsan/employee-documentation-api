@@ -1,12 +1,12 @@
-import { IsArray, IsDateString, IsEmail, IsNotEmpty, IsOptional, IsPhoneNumber, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateEmployeeDto {
   @IsNotEmpty()
   @IsString()
   name: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsArray()
-  @IsString()
-  documents: string[];
+  @IsUUID('4', { each: true })
+  documentTypeIds?: string[];
 }

@@ -16,7 +16,7 @@ import {
   UpdateEmployeeUseCase,
 } from '../../core/usecases';
 import { Employee } from '../../core/entity/employee.entity';
-import { CreateEmployeeDto } from '../../dtos';
+import { CreateEmployeeDto, UpdateEmployeeDto } from '../../dtos';
 
 @Controller('employees')
 export class EmployeeController {
@@ -30,7 +30,7 @@ export class EmployeeController {
 
   @Post()
   async create(@Body() body: CreateEmployeeDto) {
-    return this.createUseCase.execute(body.name, body.documents || []);
+    return this.createUseCase.execute(body.name);
   }
 
   @Get(':id')
@@ -46,7 +46,7 @@ export class EmployeeController {
   @Put(':id')
   async update(
     @Param('id') id: string,
-    @Body() body: { name?: string; documentIds?: string[] },
+    @Body() body: UpdateEmployeeDto,
   ) {
     return this.updateUseCase.execute(id, body);
   }

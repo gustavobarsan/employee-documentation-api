@@ -15,7 +15,7 @@ model Employee {
   status    EmployeeStatus @default(ACTIVE)
 
   documents Document[]
-  documentTypes DocumentType[]
+  documentTypes DocumentType[] @relation("EmployeeToDocumentType")
 
   createdAt DateTime       @default(now()) @map("created_at")
   updatedAt DateTime       @updatedAt @map("updated_at")
@@ -41,17 +41,15 @@ model Document {
 }
 
 model DocumentType {
-  id          String   @id @default(uuid())
-  name        String   @unique
+  id          String     @id @default(uuid())
+  name        String     @unique
   description String?
 
+  employees   Employee[] @relation("EmployeeToDocumentType")
   documents   Document[]
 
-  employeeId     String         @map("employee_id")
-  employee       Employee       @relation(fields: [employeeId], references: [id])
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
 
   @@map("document_types")
 }

@@ -1,9 +1,9 @@
 export class Employee {
   id: string;
   name: string;
-  documents: string [];
+  documents?: EmployeeDocument[];
   documentTypes?: { id: string; name: string, description: string}[];
-  status: EmployeeStatus;
+  status: string;
   hiredAt: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -15,7 +15,18 @@ export class Employee {
   }
 }
 
-enum EmployeeStatus {
+export type EmployeeDocument = {
+  id: string;
+  name: string;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+  employeeId: string;
+  documentTypeId: string;
+};
+
+
+export enum EmployeeStatus {
   ACTIVE = 'ACTIVE',
   INACTIVE = 'INACTIVE',
   TERMINATED = 'TERMINATED',
