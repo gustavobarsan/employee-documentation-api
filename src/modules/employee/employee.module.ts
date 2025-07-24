@@ -10,6 +10,7 @@ import {
 } from './core/usecases';
 import { EmployeePrismaRepository } from './adapters/repositories/prismaEmployee.repository';
 import { EmployeePortRepository } from './core/ports';
+import { DocumentTypeModule } from '../document-type/document-type.module';
 
 @Module({
   providers: [
@@ -24,7 +25,8 @@ import { EmployeePortRepository } from './core/ports';
     UpdateEmployeeUseCase,
     DeleteEmployeeUseCase,
   ],
-  imports: [],
+  imports: [DocumentTypeModule],
   controllers: [EmployeeController],
+  exports: [EmployeePortRepository],
 })
 export class EmployeeModule {}
