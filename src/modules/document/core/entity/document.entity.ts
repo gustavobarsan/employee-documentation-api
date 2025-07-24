@@ -12,4 +12,9 @@ export class Document {
   documentTypeId: string;
   createdAt: Date;
   updatedAt: Date;
+  constructor(props: Partial<Document>) {
+    Object.assign(this, props);
+    if (!this.createdAt) this.createdAt = new Date();
+    this.updatedAt = new Date();
+  }
 }
