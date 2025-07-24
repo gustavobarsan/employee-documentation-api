@@ -5,7 +5,9 @@ import { PrismaService } from 'src/shared/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 
 @Injectable()
-export class PrismaDocumentTypeRepository implements DocumentTypePortRepository {
+export class PrismaDocumentTypeRepository
+  implements DocumentTypePortRepository
+{
   constructor(private readonly prisma: PrismaService) {}
 
   async create(documentType: DocumentType): Promise<DocumentType> {
@@ -31,6 +33,13 @@ export class PrismaDocumentTypeRepository implements DocumentTypePortRepository 
     return documentTypes.map((docType) => toDocumentTypeDomain(docType));
   }
 
+  async findManyByIds(ids: string[]): Promise<DocumentType[]> {
+    const documentTypes = await this.prisma.documentType.findMany({
+      where: { id: { in: ids } },
+    });
+    return documentTypes.map((docType) => toDocumentTypeDomain(docType));
+  }
+
   async update(
     id: string,
     documentType: DocumentType,
@@ -42,7 +51,9 @@ export class PrismaDocumentTypeRepository implements DocumentTypePortRepository 
         description: documentType.description,
       },
     });
-    return updatedDocumentType ? toDocumentTypeDomain(updatedDocumentType) : null;
+    return updatedDocumentType
+      ? toDocumentTypeDomain(updatedDocumentType)
+      : null;
   }
 
   async delete(id: string): Promise<void> {

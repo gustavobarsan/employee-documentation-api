@@ -3,6 +3,9 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -13,47 +16,73 @@ import {
   DeleteEmployeeUseCase,
   GetAllEmployeesUseCase,
   GetEmployeeByIdUseCase,
+  LinkDocumentTypesToEmployeeUseCase,
   UpdateEmployeeUseCase,
 } from '../../core/usecases';
-import { Employee } from '../../core/entity/employee.entity';
-import { CreateEmployeeDto, UpdateEmployeeDto } from '../../dtos';
+import {
+  CreateEmployeeDto,
+  LinkDocumentTypesToEmployeeDto,
+  UpdateEmployeeDto,
+} from '../../dtos';
 
 @Controller('employees')
 export class EmployeeController {
   constructor(
-    private readonly createUseCase: CreateEmployeeUseCase,
-    private readonly getByIdUseCase: GetEmployeeByIdUseCase,
-    private readonly getAllUseCase: GetAllEmployeesUseCase,
-    private readonly updateUseCase: UpdateEmployeeUseCase,
-    private readonly deleteUseCase: DeleteEmployeeUseCase,
+    private readonly createEmployeeUseCase: CreateEmployeeUseCase,
+    private readonly getEmployeeByIdUseCase: GetEmployeeByIdUseCase,
+    private readonly getAllEmployeesUseCase: GetAllEmployeesUseCase,
+    private readonly updateEmployeeUseCase: UpdateEmployeeUseCase,
+    private readonly deleteEmployeeUseCase: DeleteEmployeeUseCase,
+    private readonly linkDocumentTypesToEmployeeUseCase: LinkDocumentTypesToEmployeeUseCase,
   ) {}
 
   @Post()
-  async create(@Body() body: CreateEmployeeDto) {
-    return this.createUseCase.execute(body.name);
+  @HttpCode(HttpStatus.CREATED)
+  create(@Body() createDto: CreateEmployeeDto) {
+    return this.createEmployeeUseCase.execute(createDto.name);
   }
 
   @Get(':id')
-  async getById(@Param('id') id: string): Promise<Employee | null> {
-    return this.getByIdUseCase.execute(id);
+  @HttpCode(HttpStatus.OK)
+  async findById(@Param('id') id: string) {
+    const employee = await this.getEmployeeByIdUseCase.execute(id);
+    if (!employee) {
+      throw new NotFoundException(`Employee with id ${id} not found`);
+    }
+    return employee;
   }
 
   @Get()
-  async getAll(@Query('name') name?: string) {
-    return this.getAllUseCase.execute({ name });
+  @HttpCode(HttpStatus.OK)
+  findAll(@Query('name') name?: string) {
+    return this.getAllEmployeesUseCase.execute({ name });
   }
 
   @Put(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() body: UpdateEmployeeDto,
-  ) {
-    return this.updateUseCase.execute(id, body);
+  @HttpCode(HttpStatus.OK)
+  async update(@Param('id') id: string, @Body() updateDto: UpdateEmployeeDto) {
+    const updated = await this.updateEmployeeUseCase.execute(id, updateDto);
+    if (!updated) {
+      throw new NotFoundException(`Employee with id ${id} not found`);
+    }
+    return updated;
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: string) {
-    const success = await this.deleteUseCase.execute(id);
-    return { success };
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(@Param('id') id: string) {
+    const deleted = await this.deleteEmployeeUseCase.execute(id);
+    if (!deleted) {
+      throw new NotFoundException(`Employee with id ${id} not found`);
+    }
+  }
+
+  @Post(':id/document-types')
+  @HttpCode(HttpStatus.OK)
+  linkDocumentTypes(
+    @Param('id') id: string,
+    @Body() linkDto: LinkDocumentTypesToEmployeeDto,
+  ) {
+    return this.linkDocumentTypesToEmployeeUseCase.execute(id, linkDto);
   }
 }

@@ -6,6 +6,7 @@ import {
   DeleteEmployeeUseCase,
   GetAllEmployeesUseCase,
   GetEmployeeByIdUseCase,
+  LinkDocumentTypesToEmployeeUseCase,
   UpdateEmployeeUseCase,
 } from './core/usecases';
 import { EmployeePrismaRepository } from './adapters/repositories/prismaEmployee.repository';
@@ -24,6 +25,7 @@ import { DocumentTypeModule } from '../document-type/document-type.module';
     GetAllEmployeesUseCase,
     UpdateEmployeeUseCase,
     DeleteEmployeeUseCase,
+    LinkDocumentTypesToEmployeeUseCase,
   ],
   imports: [DocumentTypeModule],
   controllers: [EmployeeController],

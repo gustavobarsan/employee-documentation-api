@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  EmployeeStatus,
-  DocumentStatus,
-} from '@prisma/client';
+import { EmployeeStatus, DocumentStatus } from '@prisma/client';
 import { Employee } from '../../core/entity/employee.entity';
 import { EmployeePortRepository } from '../../core/ports/employee.port.repository';
 import { PrismaService } from 'src/shared/prisma/prisma.service';
@@ -80,11 +77,33 @@ export class EmployeePrismaRepository implements EmployeePortRepository {
   async delete(id: string): Promise<void> {
     await this.prisma.employee.delete({ where: { id } });
   }
+
+  async linkDocumentTypes(
+    employeeId: string,
+    documentTypeIds: string[],
+  ): Promise<Employee> {
+    const updatedEmployee = await this.prisma.employee.update({
+      where: { id: employeeId },
+      data: {
+        documentTypes: {
+          set: documentTypeIds.map((id) => ({ id })),
+        },
+      },
+      include: {
+        documents: true,
+        documentTypes: true,
+      },
+    });
+
+    return toEmployeeDomain(updatedEmployee);
+  }
 }
 
-function toEmployeeDomain(data: Prisma.EmployeeGetPayload<{
+function toEmployeeDomain(
+  data: Prisma.EmployeeGetPayload<{
     include: { documents: true; documentTypes: true };
-  }>): Employee {
+  }>,
+): Employee {
   return new Employee({
     id: data.id,
     name: data.name,
