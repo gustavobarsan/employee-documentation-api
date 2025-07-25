@@ -4,4 +4,4 @@ export * from "./getAllEmployeesUseCase";
 export * from "./getEmployeeIdUseCase";
 export * from "./updateEmployeeUseCase";
 export * from "./linkDocumentTypesToEmployeeUseCase";
-export * from "./unlinkDocumentTypesFromEmployeeUseCase"
+export * from './unlinkDocumentTypesFromEmployeeUseCase';

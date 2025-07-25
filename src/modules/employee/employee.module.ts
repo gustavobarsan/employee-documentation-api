@@ -8,6 +8,7 @@ import {
   GetEmployeeByIdUseCase,
   LinkDocumentTypesToEmployeeUseCase,
   UpdateEmployeeUseCase,
+  UnlinkDocumentTypesFromEmployeeUseCase,
 } from './core/usecases';
 import { EmployeePrismaRepository } from './adapters/repositories/prismaEmployee.repository';
 import { EmployeePortRepository } from './core/ports';
@@ -26,6 +27,7 @@ import { DocumentTypeModule } from '../document-type/document-type.module';
     UpdateEmployeeUseCase,
     DeleteEmployeeUseCase,
     LinkDocumentTypesToEmployeeUseCase,
+    UnlinkDocumentTypesFromEmployeeUseCase,
   ],
   imports: [DocumentTypeModule],
   controllers: [EmployeeController],

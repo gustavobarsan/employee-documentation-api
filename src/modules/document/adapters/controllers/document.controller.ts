@@ -8,9 +8,10 @@ import {
   HttpCode,
   HttpStatus,
   Controller,
+  Query,
 } from '@nestjs/common';
-import { CreateDocumentDto } from '../../dtos/createDocumentDto';
-import { UpdateDocumentDto } from '../../dtos/updateDocumentDto';
+import { CreateDocumentDto } from '../../dtos/createDocument.dto';
+import { UpdateDocumentDto } from '../../dtos/updateDocument.dto';
 import {
   CreateDocumentUseCase,
   DeleteDocumentUseCase,
@@ -19,12 +20,13 @@ import {
   GetDocumentsByEmployeeIdUseCase,
   UpdateDocumentUseCase,
 } from '../../core/usecases';
+import { ListDocumentsDto } from '../../dtos';
 
 @Controller('documents')
 export class DocumentController {
   constructor(
     private readonly createDocumentUseCase: CreateDocumentUseCase,
-    private readonly findAllDocumentsUseCase: GetAllDocumentsUseCase,
+    private readonly getAllDocumentsUseCase: GetAllDocumentsUseCase,
     private readonly findDocumentByIdUseCase: GetDocumentByIdUseCase,
     private readonly getDocumentsByEmployeeIdUseCase: GetDocumentsByEmployeeIdUseCase,
     private readonly updateDocumentUseCase: UpdateDocumentUseCase,
@@ -39,8 +41,8 @@ export class DocumentController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  findAll() {
-    return this.findAllDocumentsUseCase.execute();
+  findAll(@Query() query: ListDocumentsDto) {
+    return this.getAllDocumentsUseCase.execute(query);
   }
 
   @Get(':id')

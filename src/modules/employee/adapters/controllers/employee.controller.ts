@@ -7,7 +7,6 @@ import {
   HttpStatus,
   NotFoundException,
   Param,
-  Patch,
   Post,
   Put,
   Query,
@@ -90,7 +89,7 @@ export class EmployeeController {
     return this.linkDocumentTypesToEmployeeUseCase.execute(id, linkDto);
   }
 
-  @Patch(':id/document-types')
+  @Delete(':id/document-types')
   @HttpCode(HttpStatus.OK)
   unlinkDocumentTypes(
     @Param('id') id: string,

@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/shared/prisma/prisma.service';
 import { Document, DocumentStatus } from '../../core/entity/document.entity';
 import { DocumentPortRepository } from '../../core/ports/document.port.repository';
+import { ListDocumentsDto } from '../../dtos';
 
 @Injectable()
 export class DocumentPrismaRepository implements DocumentPortRepository {
@@ -33,9 +34,33 @@ export class DocumentPrismaRepository implements DocumentPortRepository {
     return results.map((result) => toDocumentDomain(result));
   }
 
-  async findAll(): Promise<Document[]> {
-    const results = await this.prisma.document.findMany();
-    return results.map((result) => toDocumentDomain(result));
+  async findAll({
+    status,
+    page = 1,
+    limit = 10,
+  }: ListDocumentsDto): Promise<{ documents: Document[]; total: number }> {
+    const where: Prisma.DocumentWhereInput = {};
+    if (status) {
+      where.status = status;
+    }
+
+    const [total, documents] = await this.prisma.$transaction([
+      this.prisma.document.count({ where }),
+      this.prisma.document.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        include: {
+          documentType: true,
+          employee: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+    ]);
+
+    return { documents: documents.map(toDocumentDomain), total };
   }
 
   async update(id: string, document: Partial<Document>): Promise<Document> {
@@ -55,8 +80,7 @@ export class DocumentPrismaRepository implements DocumentPortRepository {
   }
 }
 
-function toDocumentDomain(
-  data: Prisma.DocumentGetPayload<{}>): Document {
+function toDocumentDomain(data: Prisma.DocumentGetPayload<{}>): Document {
   return new Document({
     id: data.id,
     name: data.name,
